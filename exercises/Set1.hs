@@ -29,7 +29,7 @@ two = 2::Int
 -- should take one argument and return it multiplied by two.
 
 double :: Integer -> Integer
-double x = x * x
+double x = 2 * x
 
 ------------------------------------------------------------------------------
 -- Ex 3: define the function quadruple that uses the function double
@@ -53,6 +53,7 @@ quadruple = double . double
 --   distance 0 0 1 1  ==>  1.4142135...
 --   distance 1 1 4 5  ==>  5.0
 
+distance :: Double -> Double -> Double -> Double -> Double
 distance = todo
 
 ------------------------------------------------------------------------------
