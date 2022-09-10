@@ -94,9 +94,9 @@ isPalindrome str = reverse str == str
 --   palindromify "abracacabra" ==> "acaca"
 
 palindromify :: String -> String
-palindromify s = if isPalindrome chopped then chopped else palindromify chopped
-  where
-      chopped = tail (take (length s - 1) s)
+palindromify s
+  | s == reverse s = s
+  | otherwise = palindromify (tail (init s))
 
 ------------------------------------------------------------------------------
 -- Ex 7: implement safe integer division, that is, a function that
