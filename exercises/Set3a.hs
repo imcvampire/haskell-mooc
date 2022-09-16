@@ -208,10 +208,7 @@ joinToLength l strs = [s | s <- [a ++ b | a <- strs, b <- strs], length s == l]
 --   [] +|+ []            ==> []
 
 (+|+) :: [a] -> [a] -> [a]
-(+|+) [] [] = []
-(+|+) a [] = [head a]
-(+|+) [] b = [head b]
-(+|+) a b = [head a, head b]
+xs +|+ ys = take 1 xs ++ take 1 ys
 
 ------------------------------------------------------------------------------
 -- Ex 11: remember the lectureParticipants example from Lecture 2? We
@@ -229,6 +226,9 @@ joinToLength l strs = [s | s <- [a ++ b | a <- strs, b <- strs], length s == l]
 
 sumRights :: [Either a Int] -> Int
 sumRights xs = sum (map (fromRight 0) xs) 
+
+-- Answer to the challenge:
+-- sumRights = sum . map (either (const 0) id)
 
 ------------------------------------------------------------------------------
 -- Ex 12: recall the binary function composition operation
@@ -267,6 +267,9 @@ multiCompose fs = foldr (.) id fs
 --   multiApp sum [head, (!!2), last] [1,9,2,9,3] ==> 6
 
 multiApp f gs x = f [(g x) | g <- gs]
+
+-- Answer to the challenge:
+-- multiApp f gs x = f $ (map ($x) gs)
 
 ------------------------------------------------------------------------------
 -- Ex 14: in this exercise you get to implement an interpreter for a
@@ -313,3 +316,14 @@ interpreter' (x, y) (c:cs) out = case c of
   "printY" -> interpreter' (x, y) cs (show y : out)
   "printX" -> interpreter' (x, y) cs (show x : out)
   _ -> interpreter' (x, y) [] out
+
+-- Answer to the challenge:
+-- interpreter commands = go 0 0 commands
+--  where go x y ("up":commands) = go x (y+1) commands
+        -- go x y ("down":commands) = go x (y-1) commands
+        -- go x y ("left":commands) = go (x-1) y commands
+        -- go x y ("right":commands) = go (x+1) y commands
+        -- go x y ("printX":commands) = show x : go x y commands
+        -- go x y ("printY":commands) = show y : go x y commands
+        -- go x y []                  = []
+        -- go x y (_:commands)        = "BAD" : go x y commands
