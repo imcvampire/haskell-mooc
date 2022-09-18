@@ -53,22 +53,11 @@ buildList' count (n : nums) = buildList' (count - 1) (n : n : nums)
 -- Ps. you'll probably need a recursive helper function
 
 sums :: Int -> [Int]
-sums i = revList (sum i)
-
-sum :: Int -> [Int]
-sum i
-  | i > 0 = recsum i : sum (i - 1)
-  | otherwise = []
-
-recsum :: Int -> Int
-recsum 0 = 0
-recsum x = x + recsum (x -1)
-
-revList :: [a] -> [a]
-revList = go []
+sums i = go 0 1
   where
-    go acc [] = acc
-    go acc (x : xs) = go (x : acc) xs
+    go sum j
+      | j > i = []
+      | otherwise = (sum + j) : go (sum + j) (j + 1)
 
 ------------------------------------------------------------------------------
 -- Ex 3: define a function mylast that returns the last value of the
@@ -83,8 +72,7 @@ revList = go []
 
 mylast :: a -> [a] -> a
 mylast def [] = def
-mylast def [x] = x
-mylast def (x : xs) = mylast def xs
+mylast _ (x : xs) = mylast x xs
 
 ------------------------------------------------------------------------------
 -- Ex 4: safe list indexing. Define a function indexDefault so that
@@ -103,10 +91,8 @@ mylast def (x : xs) = mylast def xs
 
 indexDefault :: [a] -> Int -> a -> a
 indexDefault [] _ def = def
-indexDefault (x : xs) i def
-  | i < 0 = def
-  | i == 0 = x
-  | i > 0 = indexDefault xs (i -1) def
+indexDefault (x : xs) 0 def = x
+indexDefault (x : xs) i def = indexDefault xs (i -1) def
 
 ------------------------------------------------------------------------------
 -- Ex 5: define a function that checks if the given list is in
@@ -124,12 +110,9 @@ indexDefault (x : xs) i def
 sorted :: [Int] -> Bool
 sorted [] = True
 sorted [x] = True
-sorted (x : [y])
-  | x <= y = True
-  | x > y = False
 sorted (x : y : xs)
   | x > y = False
-  | x <= y = sorted (y : xs)
+  | otherwise = sorted (y : xs)
 
 ------------------------------------------------------------------------------
 -- Ex 6: compute the partial sums of the given list like this:
@@ -158,11 +141,11 @@ sumsOf xs = s 0 xs
 --   merge [1,1,6] [1,2]   ==> [1,1,1,2,6]
 
 merge :: [Int] -> [Int] -> [Int]
-merge xs [] = xs
 merge [] ys = ys
+merge xs [] = xs
 merge (x : xs) (y : ys)
-  | x <= y = x : merge xs (y : ys)
-  | x > y = y : merge (x : xs) ys
+  | x < y = x : merge xs (y : ys)
+  | otherwise = y : merge (x : xs) ys
 
 ------------------------------------------------------------------------------
 -- Ex 8: compute the biggest element, using a comparison function
@@ -191,10 +174,9 @@ merge (x : xs) (y : ys)
 
 mymaximum :: (a -> a -> Bool) -> a -> [a] -> a
 mymaximum bigger initial [] = initial
-mymaximum bigger initial (x : xs) =
-  if bigger initial x
-    then mymaximum bigger initial xs
-    else mymaximum bigger x xs
+mymaximum bigger initial (x : xs)
+  | bigger x initial = mymaximum bigger x xs
+  | otherwise = mymaximum bigger initial xs
 
 ------------------------------------------------------------------------------
 -- Ex 9: define a version of map that takes a two-argument function
@@ -208,9 +190,8 @@ mymaximum bigger initial (x : xs) =
 -- Use recursion and pattern matching. Do not use any library functions.
 
 map2 :: (a -> b -> c) -> [a] -> [b] -> [c]
-map2 f [] bs = []
-map2 f as [] = []
 map2 f (a : as) (b : bs) = f a b : map2 f as bs
+map2 f _ _ = []
 
 ------------------------------------------------------------------------------
 -- Ex 10: implement the function maybeMap, which works a bit like a
